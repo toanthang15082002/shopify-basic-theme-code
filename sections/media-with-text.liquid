@@ -26,6 +26,156 @@
     text-decoration: none;
     margin-top: 10px;
   }
+
+  /* CSS block product */
+  .product-card {
+    width: 250px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  .search-icon {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+    background-color: #c4744c;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transform: translateY(-20px);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .search-icon:hover {
+    background-color: #e19b76;
+  }
+
+  .search-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: #ffffff;
+  }
+
+  .add-to-cart-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    width: 90%;
+    padding: 12px 20px;
+    background-color: #c4744c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  .add-to-cart-btn span {
+    position: relative;
+    z-index: 1;
+    font-weight: 500;
+  }
+
+  .add-to-cart-btn::before {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #e19b76;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .add-to-cart-btn:hover::before {
+    top: 0;
+  }
+
+  .product-image {
+    height: 250px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.5s;
+  }
+
+  .product-image:hover .add-to-cart-btn {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .product-image:hover .search-icon {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .product-image .add-to-cart-btn,
+  .product-image .search-icon {
+    will-change: transform, opacity, visibility;
+  }
+
+  .product-image .second-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .product-image:hover .second-img {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .product-info {
+    padding: 24px 10px;
+  }
+
+  .product-title {
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+    transition: color 0.3s;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .product-title:hover {
+    color: #c4744c;
+  }
+
+  .product-price {
+    font-size: 14px;
+    color: #555;
+    margin-top: 8px;
+    display: block;
+  }
 </style>
 
 <div class="media-with-text-custom">
@@ -41,10 +191,13 @@
           {%- case block.type -%}
             {%- when 'heading' -%}
               <h1>{{ block.settings.heading }}</h1>
+
             {%- when 'text' -%}
               <p>{{ block.settings.text }}</p>
+
             {%- when 'button' -%}
               <a href="{{ section.settings.link }}" class="button">{{ section.settings.button }}</a>
+
             {%- when 'text-column' -%}
               <div class="text-column">
                 {% if block.settings.icon %}
@@ -53,6 +206,84 @@
                 <h3>{{ block.settings.title }}</h3>
                 <p>{{ block.settings.description }}</p>
               </div>
+
+            {%- when 'product' -%}
+              {% assign product = all_products[block.settings.product] %}
+              {% if product %}
+                <div class="product-card">
+                  <div class="product-image">
+                    <div class="search-icon">
+                      <svg
+                        fill="#FFFFFF"
+                        height="15px"
+                        width="15px"
+                        version="1.1"
+                        id="Capa_1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 488.4 488.4"
+                        xml:space="preserve"
+                      >
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <g>
+                            <g>
+                              <path d="M0,203.25c0,112.1,91.2,203.2,203.2,203.2c51.6,0,98.8-19.4,134.7-51.2l129.5,129.5c2.4,2.4,5.5,3.6,8.7,3.6 s6.3-1.2,8.7-3.6c4.8-4.8,4.8-12.5,0-17.3l-129.6-129.5c31.8-35.9,51.2-83,51.2-134.7c0-112.1-91.2-203.2-203.2-203.2 S0,91.15,0,203.25z M381.9,203.25c0,98.5-80.2,178.7-178.7,178.7s-178.7-80.2-178.7-178.7s80.2-178.7,178.7-178.7 S381.9,104.65,381.9,203.25z"></path>
+                            </g>
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                    <img
+                      src="https://x-breeze.myshopify.com/cdn/shop/files/anchovy-skewer-can.jpg?v=1726052693&width=1500"
+                      alt="Product Image"
+                    >
+                    <img
+                      src="https://x-breeze.myshopify.com/cdn/shop/files/IMG-5110_cdbbd8bf-40a8-434d-aa85-b1a138eaa5d5.png?v=1726052934&width=750"
+                      alt="Product Image"
+                      class="second-img"
+                    >
+                    <button class="add-to-cart-btn">
+                      <span>Add to cart</span>
+                    </button>
+                  </div>
+                  <div class="product-info">
+                    <h3 class="product-title">Anchovy Stuffed Olives</h3>
+                    <span class="product-price">From $3.99 USD</span>
+                  </div>
+                </div>
+              {% else %}
+                <p>Product not found</p>
+              {% endif %}
+
+              <script>
+                function addToCart(productId) {
+                  let formData = {
+                    items: [
+                      {
+                        id: productId,
+                        quantity: 1,
+                      },
+                    ],
+                  };
+
+                  fetch(window.Shopify.routes.root + 'cart/add.js', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                  })
+                    .then((response) => {
+                      console.log(response);
+                      return response.json();
+                    })
+                    .catch((error) => {
+                      console.error('Error:', error);
+                    });
+                }
+              </script>
           {% endcase %}
         {% endfor %}
       </div>
@@ -597,28 +828,28 @@
               "label": "H1"
             },
             {
-              "label": "h2",
-              "value": "H2"
+              "value": "h2",
+              "label": "H2"
             },
             {
-              "label": "h3",
-              "value": "H3"
+              "value": "h3",
+              "label": "H3"
             },
             {
-              "label": "h4",
-              "value": "H4"
+              "value": "h4",
+              "label": "H4"
             },
             {
-              "label": "h5",
-              "value": "H5"
+              "value": "h5",
+              "label": "H5"
             },
             {
-              "label": "h6",
-              "value": "H6"
+              "value": "h6",
+              "label": "H6"
             },
             {
-              "label": "p",
-              "value": "p"
+              "value": "p",
+              "label": "p"
             }
           ],
           "default": "h1"
@@ -921,6 +1152,254 @@
           "default": "2"
         }
       ]
+    },
+    {
+      "type": "product",
+      "name": "Product",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Product"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "checkbox",
+          "id": "product_title",
+          "label": "Show product title",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "title_size",
+          "label": "Title size",
+          "min": 50,
+          "max": 200,
+          "step": 10,
+          "unit": "%",
+          "default": 100
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "Heading tag",
+          "options": [
+            {
+              "value": "h1",
+              "label": "H1"
+            },
+            {
+              "value": "h2",
+              "label": "H2"
+            },
+            {
+              "value": "h3",
+              "label": "H3"
+            },
+            {
+              "value": "h4",
+              "label": "H4"
+            },
+            {
+              "value": "h5",
+              "label": "H5"
+            },
+            {
+              "value": "h6",
+              "label": "H6"
+            },
+            {
+              "value": "p",
+              "label": "p"
+            }
+          ],
+          "default": "h2"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_vendor",
+          "label": "Show vendor"
+        },
+        {
+          "type": "checkbox",
+          "id": "primary_content_center",
+          "label": "Make primary content center"
+        },
+        {
+          "type": "header",
+          "content": "Buy button"
+        },
+        {
+          "type": "checkbox",
+          "id": "dynamic_checkout_buttons",
+          "label": "Show dynamic checkout buttons",
+          "default": true,
+          "info": "Using the payment methods available on your store, customers see their preferred option, like PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)"
+        },
+        {
+          "type": "header",
+          "content": "Pickup availability"
+        },
+        {
+          "type": "checkbox",
+          "id": "pickup_availability_feature",
+          "label": "Enable pickup availability feature",
+          "default": true,
+          "info": "Learn how to setup this feature [here](https://help.shopify.com/en/manual/shipping/setting-up-and-managing-your-shipping/local-methods/local-pickup)"
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_pickup_availability",
+          "label": "Hide when Pre-order is enabled"
+        },
+        {
+          "type": "header",
+          "content": "Pre-order"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Pre-order",
+          "info": "\"Pre-order\" will be used by default"
+        },
+        {
+          "type": "richtext",
+          "id": "message",
+          "label": "Message",
+          "default": "<p>This is description for pre-order</p>",
+          "info": "Message will show under Pre-order button to provide more information about the item."
+        },
+        {
+          "type": "checkbox",
+          "id": "dynamic_checkout_buttons_preorders",
+          "label": "Show dynamic checkout buttons for pre-orders"
+        },
+        {
+          "type": "header",
+          "content": "Style"
+        },
+        {
+          "type": "select",
+          "id": "content_box_type",
+          "label": "Content box type",
+          "options": [
+            {
+              "value": "square",
+              "label": "Square"
+            },
+            {
+              "value": "round",
+              "label": "Round"
+            }
+          ],
+          "default": "square"
+        },
+        {
+          "type": "color",
+          "id": "background_color_light",
+          "label": "Background color (light)",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "text_color_light",
+          "label": "Text color (light)",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "background_color_dark",
+          "label": "Background color (dark)",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "text_color_dark",
+          "label": "Text color (dark)",
+          "default": "transparent"
+        },
+        {
+          "type": "header",
+          "content": "Button colors"
+        },
+        {
+          "type": "color",
+          "id": "primary_button_light",
+          "label": "Primary button (light)",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "primary_button_text_light",
+          "label": "Primary button text (light)",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "primary_button_hover_light",
+          "label": "Primary button hover (light)",
+          "default": "#4C4C4C"
+        },
+        {
+          "type": "color",
+          "id": "primary_button_hover_text_light",
+          "label": "Primary button hover text (light)",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "secondary_button_color_light",
+          "label": "Secondary button color (light)",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "secondary_button_text_color_light",
+          "label": "Secondary button text color (light)",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "primary_button_dark",
+          "label": "Primary button (dark)",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "primary_button_text_dark",
+          "label": "Primary button text (dark)",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "primary_button_hover_dark",
+          "label": "Primary button hover (dark)",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "primary_button_hover_text_dark",
+          "label": "Primary button hover text (dark)",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "secondary_button_color_dark",
+          "label": "Secondary button color (dark)",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "secondary_button_text_color_dark",
+          "label": "Secondary button text color (dark)",
+          "default": "transparent"
+        }
+      ]
     }
   ],
   "presets": [
@@ -928,9 +1407,6 @@
       "name": "Media with Text  ",
       "category": "Custom"
     }
-  ],
-  "enabled_on": {
-    "templates": ["product"]
-  }
+  ]
 }
 {% endschema %}
