@@ -109,6 +109,38 @@
     top: 0;
   }
 
+  .add-to-cart-btn.loading span {
+    visibility: hidden;
+  }
+
+  .add-to-cart-btn.loading {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .add-to-cart-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 3px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: loading-spinner 0.6s linear infinite;
+  }
+
+  @keyframes loading-spinner {
+    from {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
   .product-image {
     height: 250px;
     overflow: hidden;
@@ -258,7 +290,7 @@
                       >
                     {% endif %}
 
-                    <button class="add-to-cart-btn">
+                    <button class="add-to-cart-btn" onclick="addToCart({{product.id}})">
                       <span>Add to cart</span>
                     </button>
                   </div>
@@ -285,6 +317,11 @@
 
               <script>
                 function addToCart(productId) {
+                  console.log(productId);
+
+                  const addToCartBtn = document.querySelector('.add-to-cart-btn');
+                  addToCartBtn.classList.add('loading');
+
                   let formData = {
                     items: [
                       {
@@ -305,8 +342,53 @@
                       console.log(response);
                       return response.json();
                     })
+                    .then((data) => {
+                      console.log(data);
+                      addToCartBtn.classList.remove('loading');
+                      updateCartCount();
+                    })
                     .catch((error) => {
                       console.error('Error:', error);
+                      addToCartBtn.classList.remove('loading');
+                    });
+                }
+
+                function updateCartCount() {
+                  fetch(window.Shopify.routes.root + 'cart.js')
+                    .then((response) => response.json())
+                    .then((cart) => {
+                      console.log(cart);
+
+                      let cartIconBubble = document.getElementById('cart-icon-bubble');
+
+                      let countBadge = cartIconBubble.querySelector('.cart-count-badge');
+
+                      if (!countBadge) {
+                        countBadge = document.createElement('div');
+                        countBadge.className = 'cart-count-badge';
+                        countBadge.style.cssText = `
+                          position: absolute;
+                          top: -2px;
+                          right: 0px;
+                          height: 20px;
+                          width: 20px;
+                          border-radius: 50%;
+                          font-size: 9px;
+                          background-color: #111111;
+                          color: #FFFFFF;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        `;
+                        cartIconBubble.style.position = 'relative';
+                        cartIconBubble.appendChild(countBadge);
+                      }
+
+                      countBadge.textContent = cart.item_count;
+                      cartIconBubble.setAttribute('data-value', cart.item_count);
+                    })
+                    .catch((error) => {
+                      console.error('Error updating cart count:', error);
                     });
                 }
               </script>
