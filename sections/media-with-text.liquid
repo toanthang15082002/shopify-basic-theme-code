@@ -29,7 +29,7 @@
 
   /* CSS block product */
   .product-card {
-    width: 250px;
+    width: 100%;
     border: 1px solid #eee;
     border-radius: 10px;
     overflow: hidden;
@@ -142,8 +142,8 @@
   }
 
   .product-image {
-    height: 250px;
-    overflow: hidden;
+    max-height: 100vh;
+    overflow: scroll;
     position: relative;
     border-radius: 5px;
   }
@@ -211,17 +211,53 @@
     font-size: 14px;
     color: #555;
   }
+
+  .product-grid {
+    display: grid;
+    gap: 16px;
+  }
+
+  .product-grid.columns-1 {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .product-grid.columns-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .product-grid.columns-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .product-grid.columns-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 1024px) {
+    .product-grid.columns-4,
+    .product-grid.columns-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .product-grid.columns-4,
+    .product-grid.columns-3,
+    .product-grid.columns-2 {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }
 </style>
 
 <div class="media-with-text-custom">
-  <div class="container">
+  {% comment %} <div class="container"> {% endcomment %}
     <div class="media-content {% if section.settings.layout == 'right' %} media-right {% else %} media-left {% endif %}">
       <div class="media">
         {% if section.settings.image %}
           <img src="{{ section.settings.image | img_url: 'large' }}" alt="{{ section.settings.heading }}">
         {% endif %}
       </div>
-      <div class="text-content">
+      <div class="text-content product-grid columns-{{ section.settings.product_column }}">
         {% for block in section.blocks %}
           {%- case block.type -%}
             {%- when 'heading' -%}
@@ -243,130 +279,187 @@
               </div>
 
             {%- when 'product' -%}
-              {% assign product = all_products[block.settings.product] %}
-              {% if product %}
-                <div class="product-card">
-                  <div class="product-image">
-                    <div class="search-icon">
-                      <svg
-                        fill="#FFFFFF"
-                        height="15px"
-                        width="15px"
-                        version="1.1"
-                        id="Capa_1"
-                        xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink"
-                        viewBox="0 0 488.4 488.4"
-                        xml:space="preserve"
-                      >
-                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                        <g id="SVGRepo_iconCarrier">
-                          <g>
+              <div>
+                {% assign product = all_products[block.settings.product] %}
+                {% assign product_form_id = 'product-form-' | append: product.id %}
+                {% if product %}
+                  <div class="product-card">
+                    <div class="product-image">
+                      <div class="search-icon">
+                        <svg
+                          fill="#FFFFFF"
+                          height="15px"
+                          width="15px"
+                          version="1.1"
+                          id="Capa_1"
+                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns:xlink="http://www.w3.org/1999/xlink"
+                          viewBox="0 0 488.4 488.4"
+                          xml:space="preserve"
+                        >
+                          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                          <g id="SVGRepo_iconCarrier">
                             <g>
-                              <path d="M0,203.25c0,112.1,91.2,203.2,203.2,203.2c51.6,0,98.8-19.4,134.7-51.2l129.5,129.5c2.4,2.4,5.5,3.6,8.7,3.6 s6.3-1.2,8.7-3.6c4.8-4.8,4.8-12.5,0-17.3l-129.6-129.5c31.8-35.9,51.2-83,51.2-134.7c0-112.1-91.2-203.2-203.2-203.2 S0,91.15,0,203.25z M381.9,203.25c0,98.5-80.2,178.7-178.7,178.7s-178.7-80.2-178.7-178.7s80.2-178.7,178.7-178.7 S381.9,104.65,381.9,203.25z"></path>
+                              <g>
+                                <path d="M0,203.25c0,112.1,91.2,203.2,203.2,203.2c51.6,0,98.8-19.4,134.7-51.2l129.5,129.5c2.4,2.4,5.5,3.6,8.7,3.6 s6.3-1.2,8.7-3.6c4.8-4.8,
+                                4.8-12.5,0-17.3l-129.6-129.5c31.8-35.9,51.2-83,51.2-134.7c0-112.1-91.2-203.2-203.2-203.2 S0,91.15,0,203.25z M381.9,203.25c0,98.5-80.2,
+                                178.7-178.7,178.7s-178.7-80.2-178.7-178.7s80.2-178.7,178.7-178.7 S381.9,104.65,381.9,203.25z"></path>
+                              </g>
                             </g>
                           </g>
-                        </g>
-                      </svg>
+                        </svg>
+                      </div>
+                      {% if product.images.size == 0 %}
+                        <img src="https://placehold.jp/250x250.png" alt="Placeholder image">
+                      {% elsif product.images.size == 1 %}
+                        <img
+                          srcset="
+                            {%- if product.images[0].width >= 360 -%}{{ product.images[0] | image_url: width: 360 }} 360w,{%- endif -%}
+                            {%- if product.images[0].width >= 533 -%}{{ product.images[0] | image_url: width: 533 }} 533w,{%- endif -%}
+                            {%- if product.images[0].width >= 720 -%}{{ product.images[0] | image_url: width: 720 }} 720w,{%- endif -%}
+                            {%- if product.images[0].width >= 940 -%}{{ product.images[0] | image_url: width: 940 }} 940w,{%- endif -%}
+                            {%- if product.images[0].width >= 1066 -%}{{ product.images[0] | image_url: width: 1066 }} 1066w,{%- endif -%}
+                            {{ product.images[0] | image_url }} {{ product.images[0].width }}w
+                          "
+                          src="{{ product.images[0] | image_url: width: 533 }}"
+                          sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, 
+                                  (min-width: 990px) calc((100vw - 130px) / 4), 
+                                  (min-width: 750px) calc((100vw - 120px) / 3), 
+                                  calc((100vw - 35px) / 2)
+                                  "
+                          alt="{{ product.images[0] }}"
+                          loading="lazy"
+                          width="{{ product.images[0].width }}"
+                          height="{{ product.images[0].height }}"
+                        >
+                        
+                      {% else %}
+                      <img
+                      srcset="
+                        {%- if product.images[0].width >= 360 -%}{{ product.images[0] | image_url: width: 360 }} 360w,{%- endif -%}
+                        {%- if product.images[0].width >= 533 -%}{{ product.images[0] | image_url: width: 533 }} 533w,{%- endif -%}
+                        {%- if product.images[0].width >= 720 -%}{{ product.images[0] | image_url: width: 720 }} 720w,{%- endif -%}
+                        {%- if product.images[0].width >= 940 -%}{{ product.images[0] | image_url: width: 940 }} 940w,{%- endif -%}
+                        {%- if product.images[0].width >= 1066 -%}{{ product.images[0] | image_url: width: 1066 }} 1066w,{%- endif -%}
+                        {{ product.images[0] | image_url }} {{ product.images[0].width }}w
+                      "
+                      src="{{ product.images[0] | image_url: width: 533 }}"
+                      sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, 
+                              (min-width: 990px) calc((100vw - 130px) / 4), 
+                              (min-width: 750px) calc((100vw - 120px) / 3), 
+                              calc((100vw - 35px) / 2)
+                              "
+                      alt="{{ product.images[0] }}"
+                      class="primary-img"
+                      loading="lazy"
+                      width="{{ product.images[0].width }}"
+                      height="{{ product.images[0].height }}"
+                    >
+                    <img
+                      srcset="
+                        {%- if product.images[1].width >= 360 -%}{{ product.images[1] | image_url: width: 360 }} 360w,{%- endif -%}
+                        {%- if product.images[1].width >= 533 -%}{{ product.images[1] | image_url: width: 533 }} 533w,{%- endif -%}
+                        {%- if product.images[1].width >= 720 -%}{{ product.images[1] | image_url: width: 720 }} 720w,{%- endif -%}
+                        {%- if product.images[1].width >= 940 -%}{{ product.images[1] | image_url: width: 940 }} 940w,{%- endif -%}
+                        {%- if product.images[1].width >= 1066 -%}{{ product.images[1] | image_url: width: 1066 }} 1066w,{%- endif -%}
+                        {{ product.images[1] | image_url }} {{ product.images[1].width }}w
+                      "
+                      src="{{ product.images[1] | image_url: width: 533 }}"
+                      sizes=" (min-width: 1800px) calc((100vw - 140px) / 4), 
+                              (min-width: 990px) calc((100vw - 130px) / 4), 
+                              (min-width: 750px) calc((100vw - 120px) / 3), 
+                              calc((100vw - 35px) / 2)
+                              "
+                      alt="{{ product.images[1] }}"
+                      class="second-img"
+                      loading="lazy"
+                      width="{{ product.images[1].width }}"
+                      height="{{ product.images[1].height }}"
+                    >
+                      {% endif %}
+                      {% render 'buy-buttons',
+                        block: block,
+                        product: product,
+                        product_form_id: product_form_id,
+                        section_id: section.id
+                      %}
                     </div>
-                    {% if product.images.size == 0 %}
-                      <img src="https://placehold.jp/250x250.png" alt="Placeholder image">
-                    {% elsif product.images.size == 1 %}
-                      <img
-                        src="{{ product.images[0] | image_url }}"
-                        alt="{{ product.images[0] }}"
-                      >
-                    {% else %}
-                      <img
-                        src="{{ product.images[0] | image_url }}"
-                        alt="{{ product.images[0] }}"
-                        class="primary-img"
-                      >
-                      <img
-                        src="{{ product.images[1] | image_url }}"
-                        alt="{{ product.images[1] }}"
-                        class="second-img"
-                      >
-                    {% endif %}
-
-                    <button class="add-to-cart-btn" onclick="addToCart({{product.id}})">
-                      <span>Add to cart</span>
-                    </button>
+                    <div
+                      class="product-info"
+                      style="text-align: {% if block.settings.primary_content_center %}center{% else %}start{% endif %};"
+                    >
+                      {% if block.settings.show_vendor %}
+                        <span class="product-price">{{ product.vendor }}</span>
+                      {% endif %}
+                      {% if block.settings.product_title %}
+                        {%- capture heading_tag -%}{{ block.settings.heading_tag }}{%- endcapture -%}
+                        <{{ heading_tag }} class="product-title">
+                          {{- product.title | default: 'product name' -}}
+                        </{{ heading_tag }}>
+                      {% endif %}
+                      <small class="compare-at-price">{{ product.compare_at_price | money }}</small>
+                      <span class="product-price">{{ product.price | money }}</span>
+                    </div>
                   </div>
-                  <div
-                    class="product-info"
-                    style="text-align: {% if block.settings.primary_content_center %}center{% else %}start{% endif %};"
-                  >
-                    {% if block.settings.show_vendor %}
-                      <span class="product-price">{{ product.vendor }}</span>
-                    {% endif %}
-                    {% if block.settings.product_title %}
-                      {%- capture heading_tag -%}{{ block.settings.heading_tag }}{%- endcapture -%}
-                      <{{ heading_tag }} class="product-title">
-                        {{- product.title | default: 'product name' -}}
-                      </{{ heading_tag }}>
-                    {% endif %}
-                    <small class="compare-at-price">{{ product.compare_at_price | money }}</small>
-                    <span class="product-price">{{ product.price | money }}</span>
                   </div>
-                </div>
-              {% else %}
-                <p>Product not found</p>
-              {% endif %}
+                {% else %}
+                  <p>Product not found</p>
+                {% endif %}
 
-              <script>
-                function addToCart(productId) {
-                  console.log(productId);
+                <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
 
-                  const addToCartBtn = document.querySelector('.add-to-cart-btn');
-                  addToCartBtn.classList.add('loading');
+                <script>
+                  function addToCart(productId) {
+                    console.log(productId);
 
-                  let formData = {
-                    items: [
-                      {
-                        id: productId,
-                        quantity: 1,
-                      },
-                    ],
-                  };
+                    const addToCartBtn = document.querySelector('.add-to-cart-btn');
+                    addToCartBtn.classList.add('loading');
 
-                  fetch(window.Shopify.routes.root + 'cart/add.js', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                  })
-                    .then((response) => {
-                      console.log(response);
-                      return response.json();
+                    let formData = new FormData();
+                    formData.append('quantity', '1');
+                    formData.append('id', productId);
+                    formData.append('form_type', 'product');
+                    formData.append('utf8', '✓');
+
+                    formData.append(
+                      'sections',
+                      'cart-notification-product, cart-notification-button, cart-icon-bubble'
+                    );
+
+                    fetch(window.Shopify.routes.root + 'cart/add.js', {
+                      method: 'POST',
+                      body: formData,
                     })
-                    .then((data) => {
-                      console.log(data);
-                      addToCartBtn.classList.remove('loading');
-                      updateCartCount();
-                    })
-                    .catch((error) => {
-                      console.error('Error:', error);
-                      addToCartBtn.classList.remove('loading');
-                    });
-                }
+                      .then((response) => {
+                        console.log(response);
+                        return response.json();
+                      })
+                      .then((data) => {
+                        console.log(data);
+                        addToCartBtn.classList.remove('loading');
+                        updateCartCount();
+                      })
+                      .catch((error) => {
+                        console.error('Error:', error);
+                        addToCartBtn.classList.remove('loading');
+                      });
+                  }
 
-                function updateCartCount() {
-                  fetch(window.Shopify.routes.root + 'cart.js')
-                    .then((response) => response.json())
-                    .then((cart) => {
-                      console.log(cart);
+                  function updateCartCount() {
+                    fetch(window.Shopify.routes.root + 'cart.js')
+                      .then((response) => response.json())
+                      .then((cart) => {
+                        console.log(cart);
 
-                      let cartIconBubble = document.getElementById('cart-icon-bubble');
+                        let cartIconBubble = document.getElementById('cart-icon-bubble');
 
-                      let countBadge = cartIconBubble.querySelector('.cart-count-badge');
+                        let countBadge = cartIconBubble.querySelector('.cart-count-badge');
 
-                      if (!countBadge) {
-                        countBadge = document.createElement('div');
-                        countBadge.className = 'cart-count-badge';
-                        countBadge.style.cssText = `
+                        if (!countBadge) {
+                          countBadge = document.createElement('div');
+                          countBadge.className = 'cart-count-badge';
+                          countBadge.style.cssText = `
                           position: absolute;
                           top: -2px;
                           right: 0px;
@@ -380,18 +473,18 @@
                           align-items: center;
                           justify-content: center;
                         `;
-                        cartIconBubble.style.position = 'relative';
-                        cartIconBubble.appendChild(countBadge);
-                      }
+                          cartIconBubble.style.position = 'relative';
+                          cartIconBubble.appendChild(countBadge);
+                        }
 
-                      countBadge.textContent = cart.item_count;
-                      cartIconBubble.setAttribute('data-value', cart.item_count);
-                    })
-                    .catch((error) => {
-                      console.error('Error updating cart count:', error);
-                    });
-                }
-              </script>
+                        countBadge.textContent = cart.item_count;
+                        cartIconBubble.setAttribute('data-value', cart.item_count);
+                      })
+                      .catch((error) => {
+                        console.error('Error updating cart count:', error);
+                      });
+                  }
+                </script>
           {% endcase %}
         {% endfor %}
       </div>
@@ -403,6 +496,23 @@
 {
   "name": "Media with Text",
   "settings": [
+    {
+      "type": "header",
+      "content": "Product column"
+    },
+    {
+      "type": "range",
+      "id": "product_column",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Column",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Media image"
+    },
     {
       "type": "image_picker",
       "id": "first_image",
@@ -1264,7 +1374,7 @@
     {
       "type": "product",
       "name": "Product",
-      "limit": 1,
+      "limit": 8,
       "settings": [
         {
           "type": "header",
