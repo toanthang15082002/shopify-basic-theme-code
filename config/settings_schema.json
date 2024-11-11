@@ -1395,6 +1395,213 @@
     ]
   },
   {
+    "name": "Search",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Predictive search"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_search",
+        "default": true,
+        "label": "Enable search",
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_refined_search_box",
+        "default": false,
+        "label": "Enable refined search box",
+      },
+      {
+        "type": "select",
+        "id": "search_results",
+        "options": [
+          {
+            "value": "products_only",
+            "label": "Products only"
+          },
+          {
+            "value": "products_and_collection",
+            "label": "Products and collection"
+          },
+          {
+            "value": "products_page_and_article",
+            "label": "Products page and article"
+          },
+          {
+            "value": "products_and_page",
+            "label": "Products and page"
+          },
+          {
+            "value": "all_content",
+            "label": "All content"
+          }
+        ],
+        "default": "all_content",
+        "label": "Search results"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_product_suggestions",
+        "default": true,
+        "label": "Enable product suggestions",
+        "info": "Live search results. Not available in all languages."
+      },
+      {
+        "type": "checkbox",
+        "id": "search_show_vendor",
+        "default": true,
+        "label": "Show vendor",
+      },
+      {
+        "type": "checkbox",
+        "id": "search_show_price",
+        "default": true,
+        "label": "Show price",
+      },
+      {
+        "type": "range",
+        "id": "desktop_maximum_results",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 6,
+        "label": "Desktop maximum results"
+      },
+      {
+        "type": "range",
+        "id": "mobile_maximum_results",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 3,
+        "label": "Mobile maximum results"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_view_more_button",
+        "default": true,
+        "label": "Show \"View more\" button"
+      },
+      {
+        "type": "collection",
+        "id": "popular_products_search",
+        "label": "Popular products search",
+      },
+      {
+        "type": "link_list",
+        "id": "search_recommendation",
+        "label": "Search recommendation",
+      },
+      {
+        "type": "range",
+        "id": "popular_products_search_limit",
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "default": 6,
+        "label": "Popular products search limit"
+      },
+      {
+        "type": "select",
+        "id": "search_box_layout",
+        "options": [
+          {
+            "value": "collage",
+            "label": "Collage"
+          },
+          {
+            "value": "2",
+            "label": "2 columns"
+          }
+        ],
+        "default": "collage",
+        "label": "Search box layout"
+      },
+      {
+        "type": "header",
+        "content": "Search exclusion"
+      },
+      {
+        "type": "paragraph",
+        "content": "Exclude collections from in-store search and automatic recommendations."
+      },
+      {
+        "type": "collection_list",
+        "id": "search_exclusion",
+        "label": "Search exclusion"
+      },
+      {
+        "type": "header",
+        "content": "Speech search"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_speech_search",
+        "default": false,
+        "label": "Enable speech search",
+        "info": "Speech search is only available on Chrome for desktop or Android (will not work on iPhone)."
+      },
+      {
+        "type": "color",
+        "id": "speech_pulse_color_light",
+        "label": "Speech pulse color (light)",
+        "default": "#FB8500"
+      },
+      {
+        "type": "color",
+        "id": "speech_pulse_color_dark",
+        "label": "Speech pulse color (dark)",
+        "default": "#FB8500"
+      },
+      {
+        "type": "header",
+        "content": "Breadcrumbs",
+      },
+      {
+        "type": "checkbox",
+        "id": "show_breadcrumbs",
+        "default": true,
+        "label": "Show breadcrumbs",
+      },
+      {
+        "type": "select",
+        "id": "breadcrumb_separator",
+        "options": [
+          {
+            "value": ">",
+            "label": ">"
+          },
+          {
+            "value": "·",
+            "label": "·"
+          },
+          {
+            "value": "•",
+            "label": "•"
+          },
+          {
+            "value": "/",
+            "label": "/"
+          },
+          {
+            "value": "-",
+            "label": "-"
+          },
+          {
+            "value": "__",
+            "label": "__"
+          },
+          {
+            "value": "~",
+            "label": "~"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.currency_format.name",
     "settings": [
       {
