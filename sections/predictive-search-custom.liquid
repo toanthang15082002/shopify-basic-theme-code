@@ -11,7 +11,7 @@
       class="overflow-auto max-h-[60vh] search-page:max-h-[50vh] scrollbar-body"
       role="listbox"
     >
-      <div class="grow lg:flex flex-wrap border-b">
+      <div class="grow lg:flex lg:flex-wrap border-b">
         {%- if predictive_search.resources.queries.size > 0 -%}
           <div class="flex-1 p-4 border-r">
             <h2
@@ -70,11 +70,11 @@
           >
         {%- endif -%}
         {%- if first_column_results_size > 0 -%}
-          <div class="flex flex-wrap w-full">
+          <div class="flex flex-wrap w-full lg:flex-row flex-col">
         {%- endif -%}
 
         {%- if predictive_search.resources.products.size > 0 -%}
-          <div class="flex-1 p-4 border-r">
+          <div class="flex-1 p-4 border-r w-full lg:w-auto">
             <h2 class="text-[#b35c3c] uppercase mb-4">
               {{- 'templates.search.products' | t -}}
             </h2>
@@ -124,7 +124,7 @@
           </div>
         {%- endif -%}
         {%- if predictive_search.resources.collections.size > 0 -%}
-          <div class="flex-1 p-4 border-r">
+          <div class="flex-1 p-4 border-r w-full lg:w-auto">
             <h2 class="predictive-search-heading text-[#b35c3c] uppercase mb-4">Collections</h2>
             <ul
               class="predictive-search__results-list list-none space-y-3"
@@ -169,7 +169,7 @@
           </div>
         {%- endif -%}
         {%- if predictive_search.resources.articles.size > 0 -%}
-          <div class="flex-1 p-4 border-r">
+          <div class="flex-1 p-4 border-r w-full lg:w-auto">
             <h2
               id="predictive-search-pages-desktop"
               class="text-[#b35c3c] uppercase mb-4"
