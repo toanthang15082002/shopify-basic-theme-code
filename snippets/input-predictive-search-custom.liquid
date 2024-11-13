@@ -1,21 +1,37 @@
 {% if settings.enable_search %}
-  <div x-data="searchComponent" class="relative max-w-6xl w-full ml-4">
+  <div
+    x-data="searchComponent"
+    id="searchComponent"
+    class="relative max-w-6xl w-full ml-4"
+    data-search-type="
+      {%- case settings.search_results -%}
+      {%- when "products_only" -%}product
+      {%- when "products_and_collection" -%}product,collection
+      {%- when "products_page_and_article" -%}product,page,article
+      {%- when "products_and_page" -%}product,page
+      {%- else -%}query,product,page,collection,article
+      {%- endcase -%}
+    "
+    data-desktop-limit="{{ settings.desktop_maximum_results }}"
+    data-mobile-limit="{{ settings.mobile_maximum_results }}"
+  >
     <div class="max-w-[62rem] mx-auto w-full border-b">
       <div class="relative pr-5 lg:pr-0 flex">
         {% if settings.enable_refined_search_box %}
-          <div class="md:relative search-categories flex items-center flex-shrink-0">
-            <div
-              class="inline-flex lg:inline-block border-r mr-2 pr-3.5"
-              x-data="{ open: false }"
-              @keyup.escape="open = false"
-            >
-              <select class="bg-transparent outline-none text-gray-500 mr-2">
-                <option
-                  value="all"
-                  class="absolute pt-6 pb-7 z-50 left-0 top-[calc(100%+12px)] lg:bottom-auto background-header shadow-[0_0_6px_-4px_rgba(var(--colors-text))]"
-                >
-                  All categories
-                </option>
+          <div class="md:relative flex items-center flex-shrink-0">
+            <div class="inline-flex lg:inline-block border-r mr-2">
+              <select class="shadow-none bg-transparent outline-none text-[#574136] hover:text-[#c2a27a] mr-2">
+                {% if shop.types.size > 0 %}
+                  {% for type in shop.types %}
+                    {% if type == '' %}
+                      <option value="" class="p-10">All categories</option>
+                    {% else %}
+                      <option value="{{ type }}" class="">{{ type }}</option>
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  <option value="all_categories" class="p-4">All categories</option>
+                {% endif %}
               </select>
             </div>
           </div>
@@ -24,9 +40,8 @@
           <input
             type="text"
             name="q"
-            class="peer py-3 pr-[4.5rem] pl-4 lg:pl-2 lg:pr-20 text-left w-full appearance-none relative outline-none bg-transparent placeholder:text-current placeholder:opacity-60"
+            class="peer py-3 pr-[4.5rem] pl-4 lg:pl-2 lg:pr-20 text-left w-full appearance-none relative outline-none shadow-none bg-transparent placeholder:text-current placeholder:opacity-60"
             placeholder="Search..."
-            x-ref="input_search"
             x-model="query"
             @input="fetchResults"
           >
@@ -47,39 +62,53 @@
   </div>
   <div
     id="search-result"
-    class="md:max-h-[50vh] absolute left-1/2 top-full transform translate-x-[-50%] lg:w-[1000px] w-3/4 bg-[#f5f0e8] z-50"
-    x-show="true"
-    @click.away="x-show = false"
+    class="md:max-h-[50vh] absolute left-1/2 top-full transform -translate-x-1/2 lg:w-[1000px] w-3/4 bg-[#f5f0e8] z-50"
   ></div>
 {% endif %}
+
 <script>
   document.addEventListener('alpine:init', () => {
-    Alpine.data('searchComponent', () => ({
-      query: '',
-      open: false,
+    Alpine.data('searchComponent', () => {
+      const searchType =
+        document.getElementById('searchComponent').getAttribute('data-search-type') ||
+        'query,product,page,collection,article';
 
-      async fetchResults() {
-        const searchUrl = `/search/suggest?q=${this.query}&resources[type]=query,product,page,collection,article&resources[limit]=5&section_id=predictive-search-custom`;
-        try {
-          const response = await fetch(searchUrl);
-          const data = await response.text();
-          if (data) {
-            document.getElementById('search-result').innerHTML = data;
-          }
-          if (response.status == 422) {
-            document.getElementById('search-result').style.visibility = 'hidden';
-          }
-          if (response.status == 200) {
-            document.getElementById('search-result').style.visibility = 'visible';
-          }
-        } catch (error) {
-          console.error('Error fetching search results:', error);
-        }
-      },
+      function getSearchLimit() {
+        const isMobile = window.innerWidth <= 1024;
+        const desktopSearchLimit = document.getElementById('searchComponent').getAttribute('data-desktop-limit');
+        const mobileSearchLimit = document.getElementById('searchComponent').getAttribute('data-mobile-limit');
+        return isMobile ? mobileSearchLimit : desktopSearchLimit;
+      }
 
-      closeResults() {
-        this.open = false;
-      },
-    }));
+      return {
+        query: '',
+        open: false,
+
+        async fetchResults() {
+          const searchLimit = getSearchLimit();
+          const searchUrl = `/search/suggest?q=${this.query}&resources[type]=${searchType}&resources[limit]=${searchLimit}&section_id=predictive-search-custom`;
+
+          try {
+            const response = await fetch(searchUrl);
+            const data = await response.text();
+            if (data) {
+              document.getElementById('search-result').innerHTML = data;
+            }
+            if (response.status == 422) {
+              document.getElementById('search-result').style.visibility = 'hidden';
+            }
+            if (response.status == 200) {
+              document.getElementById('search-result').style.visibility = 'visible';
+            }
+          } catch (error) {
+            console.error('Error fetching search results:', error);
+          }
+        },
+
+        closeResults() {
+          this.open = false;
+        },
+      };
+    });
   });
 </script>

@@ -1,4 +1,20 @@
 {% comment %}theme-check-disable ImgLazyLoading{% endcomment %}
+<style>
+  .underline-animation::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 1px;
+    background-color: currentColor;
+    transition: width 0.3s ease;
+  }
+
+  .underline-animation:hover::after {
+    width: 100%;
+  }
+</style>
 {%- if predictive_search.performed -%}
   {% assign first_column_results_size = predictive_search.resources.queries.size
     | plus: predictive_search.resources.collections.size
@@ -12,11 +28,11 @@
       role="listbox"
     >
       <div class="grow lg:flex lg:flex-wrap border-b">
-        {%- if predictive_search.resources.queries.size > 0 -%}
+        {%- if predictive_search.resources.queries.size > 0 and settings.enable_product_suggestions -%}
           <div class="flex-1 p-4 border-r">
             <h2
               id="predictive-search-queries"
-              class="predictive-search-heading text-[#b35c3c] uppercase mb-4"
+              class="predictive-search-heading text-[#574136] uppercase mb-4"
             >
               {{- 'templates.search.suggestions' | t -}}
             </h2>
@@ -27,9 +43,13 @@
               aria-labelledby="predictive-search-queries"
             >
               {%- for query in predictive_search.resources.queries -%}
-                <li class="predictive-search__list-item">
-                  <a href="{{ query.url }}" class="flex items-center space-x-4" tabindex="-1">
-                    <div class="text-[#333]">
+                <li class="space-x-4">
+                  <a
+                    href="{{ query.url }}"
+                    class="flex items-center space-x-4"
+                    tabindex="-1"
+                  >
+                    <div class="relative underline-animation text-[#574136] hover:text-[#c2a27a]">
                       <p>{{ query.styled_text }}</p>
                     </div>
                   </a>
@@ -41,7 +61,7 @@
         {%- if predictive_search.resources.pages.size > 0 -%}
           <div class="flex-1 p-4 border-r">
             <h2
-              class="predictive-search-heading text-[#b35c3c] uppercase mb-4"
+              class="predictive-search-heading text-[#574136] uppercase mb-4"
             >
               {{- 'templates.search.page' | t -}}
             </h2>
@@ -50,9 +70,9 @@
               role="listbox"
             >
               {%- for page in predictive_search.resources.pages -%}
-                <li class="predictive-search__list-item">
+                <li class="space-x-4">
                   <a href="{{ page.url }}" class="flex items-center space-x-4" tabindex="-1">
-                    <div class="text-[#333]">
+                    <div class="relative underline-animation text-[#574136] hover:text-[#c2a27a]">
                       <p>{{ page.handle }}</p>
                     </div>
                   </a>
@@ -75,7 +95,7 @@
 
         {%- if predictive_search.resources.products.size > 0 -%}
           <div class="flex-1 p-4 border-r w-full lg:w-auto">
-            <h2 class="text-[#b35c3c] uppercase mb-4">
+            <h2 class="text-[#574136] uppercase mb-4">
               {{- 'templates.search.products' | t -}}
             </h2>
             <ul class="list-none space-y-3">
@@ -105,17 +125,21 @@
                       </div>
                     </div>
                     <div class="pt-2 ml-5 flex-1">
-                      <div class="leading-tight mb-2 uppercase p-break-words tracking-widest text-xl">
-                        {{ product.vendor }}
-                      </div>
+                      {% if settings.search_show_vendor %}
+                        <div class="leading-tight mb-2 uppercase p-break-words tracking-widest text-xl">
+                          {{ product.vendor }}
+                        </div>
+                      {% endif %}
                       <div>
-                        <p class="capitalize p-break-words leading-tight duration-200 transition hover-text-link text-[#574136]">
+                        <p class="capitalize p-break-words leading-tight duration-200 transition hover-text-link text-[#574136] hover:text-[#c2a27a]">
                           {{ product.title | escape }}
                         </p>
                       </div>
-                      <div class="leading-none">
-                        <p class="pt-2">{{ product.price | money }}</p>
-                      </div>
+                      {% if settings.search_show_price %}
+                        <div class="leading-none">
+                          <p class="pt-2">{{ product.price | money }}</p>
+                        </div>
+                      {% endif %}
                     </div>
                   </a>
                 </li>
@@ -125,13 +149,13 @@
         {%- endif -%}
         {%- if predictive_search.resources.collections.size > 0 -%}
           <div class="flex-1 p-4 border-r w-full lg:w-auto">
-            <h2 class="predictive-search-heading text-[#b35c3c] uppercase mb-4">Collections</h2>
+            <h2 class="predictive-search-heading text-[#574136] uppercase mb-4">Collections</h2>
             <ul
               class="predictive-search__results-list list-none space-y-3"
               role="listbox"
             >
               {%- for collection in predictive_search.resources.collections -%}
-                <li class="predictive-search__list-item">
+                <li class="flex items-center space-x-4">
                   <a href="{{ collection.url }}" class="flex relative disable-effect h-full">
                     <div class="w-36 relative">
                       <div class="relative overflow-hidden w-full float-left before:h-0 before:block before:pb-[133.0%]">
@@ -157,7 +181,7 @@
                     </div>
                     <div class="pt-2 ml-5 flex-1">
                       <div class="flex items-center space-x-2">
-                        <p class="capitalize p-break-words leading-tight duration-200 transition hover-text-link text-[#574136]">
+                        <p class="capitalize p-break-words leading-tight duration-200 transition hover-text-link text-[#574136] hover:text-[#c2a27a]">
                           {{ collection.title | escape }}
                         </p>
                       </div>
@@ -172,7 +196,7 @@
           <div class="flex-1 p-4 border-r w-full lg:w-auto">
             <h2
               id="predictive-search-pages-desktop"
-              class="text-[#b35c3c] uppercase mb-4"
+              class="text-[#574136] uppercase mb-4"
             >
               Articles
             </h2>
@@ -204,7 +228,7 @@
                     </div>
                     <div class="pt-2 ml-5 flex-1">
                       <div class="flex items-center space-x-2">
-                        <p class="capitalize p-break-words leading-tight duration-200 transition hover-text-link text-[#574136]">
+                        <p class="capitalize p-break-words leading-tight duration-200 transition hover-text-link text-[#574136] hover:text-[#c2a27a]">
                           {{ article.title | escape }}
                         </p>
                       </div>
@@ -218,9 +242,15 @@
       </div>
     </div>
   </div>
-  <div class="text-center py-8 border-t">
-    <a href="https://thangnt-training.myshopify.com/search" class="text-[#b35c3c] hover:text-[#c2a27a]">View all</a>
-  </div>
+  {% if settings.show_view_more_button %}
+    <div class="text-center py-8 border-t shadow-md">
+      <a
+        href="https://thangnt-training.myshopify.com/search?q={{ predictive_search.terms }}"
+        class="text-[#574136] hover:text-[#c2a27a]"
+        >View all</a
+      >
+    </div>
+  {% endif %}
 
   <span class="hidden" data-predictive-search-live-region-count-value>
     {% liquid
