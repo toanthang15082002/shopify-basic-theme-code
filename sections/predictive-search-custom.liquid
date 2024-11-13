@@ -21,24 +21,24 @@
     | plus: predictive_search.resources.pages.size
     | plus: predictive_search.resources.articles.size
   %}
-  <div class="pt-5 bg-[#faf6f1]">
+  <div class="relative pt-5 bg-[#faf6f1]">
     <div
       id="predictive-search-results"
-      class="overflow-auto max-h-[60vh] search-page:max-h-[50vh] scrollbar-body"
+      class="overflow-y-auto max-h-[60vh] search-page:max-h-[50vh] scrollbar-body"
       role="listbox"
     >
       <div class="grow lg:flex lg:flex-wrap border-b">
         {%- if predictive_search.resources.queries.size > 0 and settings.enable_product_suggestions -%}
-          <div class="flex-1 p-4 border-r">
+          <div class="flex-1 border-r">
             <h2
               id="predictive-search-queries"
-              class="predictive-search-heading text-[#574136] uppercase mb-4"
+              class="predictive-search-heading text-[#574136] uppercase pt-2 pb-5 px-10"
             >
               {{- 'templates.search.suggestions' | t -}}
             </h2>
             <ul
               id="predictive-search-results-queries-list"
-              class="predictive-search__results-list list-none space-y-3"
+              class="list-none flex flex-wrap gap-5 px-10 pb-7"
               role="listbox"
               aria-labelledby="predictive-search-queries"
             >
@@ -59,14 +59,14 @@
           </div>
         {%- endif -%}
         {%- if predictive_search.resources.pages.size > 0 -%}
-          <div class="flex-1 p-4 border-r">
+          <div class="flex-1 border-r">
             <h2
-              class="predictive-search-heading text-[#574136] uppercase mb-4"
+              class="predictive-search-heading text-[#574136] uppercase pt-2 pb-5 px-10"
             >
               {{- 'templates.search.page' | t -}}
             </h2>
             <ul
-              class="predictive-search__results-list list-none space-y-3"
+              class="list-none flex flex-wrap gap-5 px-10 pb-7"
               role="listbox"
             >
               {%- for page in predictive_search.resources.pages -%}
@@ -82,7 +82,7 @@
           </div>
         {%- endif -%}
       </div>
-      <div class="lg:flex flex-wrap lg:pt-3">
+      <div class="lg:flex flex-wrap lg:pt-3 pb-20">
         {%- if first_column_results_size > 0 or predictive_search.resources.products.size > 0 -%}
           <div
             id="predictive-search-results-groups-wrapper"
@@ -94,11 +94,11 @@
         {%- endif -%}
 
         {%- if predictive_search.resources.products.size > 0 -%}
-          <div class="flex-1 p-4 border-r w-full lg:w-auto">
-            <h2 class="text-[#574136] uppercase mb-4">
+          <div class="flex-1 border-r w-full lg:w-auto">
+            <h2 class="text-[#574136] uppercase py-2 px-10">
               {{- 'templates.search.products' | t -}}
             </h2>
-            <ul class="list-none space-y-3">
+            <ul class="list-none space-y-3 px-10 pb-2">
               {%- for product in predictive_search.resources.products -%}
                 <li class="flex items-center space-x-4">
                   <a href="{{ product.url }}" class="flex relative disable-effect h-full">
@@ -149,9 +149,9 @@
         {%- endif -%}
         {%- if predictive_search.resources.collections.size > 0 -%}
           <div class="flex-1 p-4 border-r w-full lg:w-auto">
-            <h2 class="predictive-search-heading text-[#574136] uppercase mb-4">Collections</h2>
+            <h2 class="predictive-search-heading text-[#574136] uppercase py-2 px-10">Collections</h2>
             <ul
-              class="predictive-search__results-list list-none space-y-3"
+              class="list-none space-y-3 px-10 pb-2"
               role="listbox"
             >
               {%- for collection in predictive_search.resources.collections -%}
@@ -196,11 +196,11 @@
           <div class="flex-1 p-4 border-r w-full lg:w-auto">
             <h2
               id="predictive-search-pages-desktop"
-              class="text-[#574136] uppercase mb-4"
+              class="text-[#574136] uppercase py-2 px-10"
             >
               Articles
             </h2>
-            <ul class="list-none space-y-3">
+            <ul class="list-none space-y-3 px-10 pb-2">
               {%- for article in predictive_search.resources.articles -%}
                 <li>
                   <a href="{{ article.url }}" class="flex relative disable-effect h-full">
@@ -239,18 +239,19 @@
             </ul>
           </div>
         {%- endif -%}
+        {% if settings.show_view_more_button %}
+          <div class="absolute bottom-0 left-0 w-full text-center py-4 border-t shadow-md bg-[#faf6f1]">
+            <a
+              href="https://thangnt-training.myshopify.com/search?q={{ predictive_search.terms }}"
+              class="text-[#574136] hover:text-[#c2a27a]"
+            >
+              View all
+            </a>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
-  {% if settings.show_view_more_button %}
-    <div class="text-center py-8 border-t shadow-md">
-      <a
-        href="https://thangnt-training.myshopify.com/search?q={{ predictive_search.terms }}"
-        class="text-[#574136] hover:text-[#c2a27a]"
-        >View all</a
-      >
-    </div>
-  {% endif %}
 
   <span class="hidden" data-predictive-search-live-region-count-value>
     {% liquid
